@@ -122,7 +122,7 @@ def main():
                     video = pafy.new(items)
                     titulo = video.title ####################################################---->here
                     if titulo[0:4] != "ERROR":
-                        print (Fore.BLUE + titulo, " " + Fore.MAGENTA + items)
+                        print (Fore.BLUE + titulo, "_" + Fore.MAGENTA + items)
                     else:
                         print (Fore.RED + "Video eliminado")
                 except:
