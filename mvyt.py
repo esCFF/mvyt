@@ -1,0 +1,142 @@
+from bs4 import BeautifulSoup
+from random import choice
+from urllib.request import Request, urlopen, FancyURLopener
+from urllib.parse import urlencode
+import urllib.request
+from colorama import Fore, Back, Style, init
+import os,sys
+import time
+import pafy
+
+class mvyt(object):
+    def __init__(self, url, user_agents):
+        self.pag = None
+        self.url = url
+        self.user_agent = choice(user_agents)
+        self.data = []
+        self.nun_pags = 0
+        self.current_pag = 0
+        self.user_in = None
+        self.coin = True
+
+    def pagination(self):
+        dat,soup = self.vids(self.url)
+        current_pag = soup.find_all('div', id='scrollpages')
+        nun_pags = soup.find_all('a',class_= 'last')
+        for items in current_pag:
+            self.current_pag = items.find('em')
+        for items in nun_pags:
+            self.nun_pags = items.contents[0]
+        all_urls = []
+        if dat:
+            for i in range (1,int(self.nun_pags)+1):
+                self.pag_url = self.url + '/' + str(i)
+                all_urls.append(self.pag_url)
+                #print (self.pag_url)
+        else:
+            print("error paginacion")
+
+    def nave (self):
+        pag = urlopen(Request(self.url, headers={'User-Agent': self.user_agent}))
+        self.read_pag = pag.read()
+        pag.close()
+        return self.read_pag
+
+    def vids (self, link):
+        self.url = link
+        soup = BeautifulSoup(self.nave(), "html.parser")
+        div_em = soup.find_all('div', class_ = 'youtube_lite')
+        for items in div_em:
+            a = items.find('a')
+            link = ('https://www.youtube.com/watch?v=' + a['data-youtube'])
+            self.data.append(link)
+        return self.data,soup
+
+    def user(self):
+        return self.user_agent
+
+class menu(object):
+    def __init__(self):
+        self.main = [
+        """         _______                        _________
+        (       )|\     /|     |\     /|\__   __/
+        | () () || )   ( |     ( \   / )   ) (
+        | || || || |   | | _____\ (_) /    | |
+        | |(_)| |( (   ) )(_____)\   /     | |
+        | |   | | \ \_/ /         ) (      | |
+        | )   ( |  \   /          | |      | |
+        |/     \|   \_/           \_/      )_( 0.2a""",
+        "                    by newfag               ",
+        "1-Todo el Thread",
+        "2-Video a video",
+        "3-Ver lista",
+        "4-Ayuda",
+        "5-Salir",
+        ]
+
+    def DrawMain(self):
+        print (Fore.RED + self.main[0],"\n",Fore.YELLOW + self.main[1],Style.RESET_ALL,"\n")
+        for items in self.main[2:7]:
+            print (Fore.MAGENTA  + items[0:1], Style.RESET_ALL + items[1::])
+
+    def DrawOption(self):
+        self.cls()
+        print (Fore.RED + self.main[0],"\n",Fore.YELLOW + self.main[1],Style.RESET_ALL,"\n")
+
+    def post(self, text):
+        user_in = str(input(Fore.MAGENTA + text + Style.RESET_ALL))
+        return user_in
+
+    def test(self):
+        print ("test")
+
+    def quit(self):
+        self.cls()
+        print ("Get the fuck out!")
+        sys.exit()
+
+    def cls(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+    def error(self):
+        input("opcion invalida...")
+
+def main():
+    user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
+    x = menu()
+    x.cls()
+    x.DrawMain()
+    option = x.post("\u21B3 Select a choice:")
+    if option == "1":
+        pass
+    elif option == "2":
+        pass
+    elif option == "3":
+        x.DrawOption()
+        res = x.post("\u21B3")
+        try:
+            test = mvyt(res, user_agents)
+            lista,soup = test.vids(res)
+            for items in lista:
+                try:
+                    video = pafy.new(items)
+                    titulo = video.title ####################################################---->here
+                    if titulo[0:4] != "ERROR":
+                        print (Fore.BLUE + titulo, " " + Fore.MAGENTA + items)
+                    else:
+                        print (Fore.RED + "Video eliminado")
+                except:
+                    pass
+        except:
+            print ("omg")
+    elif option == "4":
+        pass
+    elif option == "5":
+        x.quit()
+        pass
+    else:
+        x.error
+
+if __name__ == '__main__':
+    init()
+    main()
