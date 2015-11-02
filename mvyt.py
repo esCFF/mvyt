@@ -119,6 +119,17 @@ def test(lista):
             pass
     return videos
 
+def main_pagination(option, allurls):
+    if option == "n":
+        pass
+    elif option == "b":
+        pass
+    elif option.isdigit():
+        print (int(option))
+    else:
+        print (Error)
+
+
 def main():
     user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
     x = menu()
@@ -131,7 +142,7 @@ def main():
         pass
     elif option == "3":
         x.DrawOption()
-        res = x.post("\u21B3")
+        res = x.post("Url del thread \u21B3")
         Mvyt = mvyt(res, user_agents)
         print ("Procesando..")
         lista,soup = Mvyt.vids()
@@ -156,5 +167,6 @@ def main():
         x.error
 
 if __name__ == '__main__':
-    init()
-    main()
+    #init()
+    #main()
+    main_pagination("1")
