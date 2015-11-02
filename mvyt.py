@@ -18,9 +18,10 @@ class mvyt(object):
         self.current_pag = 0
         self.user_in = None
         self.coin = True
+        self.all_urls = []
 
     def pagination(self):
-        dat,soup = self.vids(self.url)
+        dat,soup = self.vids()
         current_pag = soup.find_all('div', id='scrollpages')
         nun_pags = soup.find_all('a',class_= 'last')
         for items in current_pag:
@@ -31,7 +32,7 @@ class mvyt(object):
         if dat:
             for i in range (1,int(self.nun_pags)+1):
                 self.pag_url = self.url + '/' + str(i)
-                all_urls.append(self.pag_url)
+                self.all_urls.append(self.pag_url)
                 #print (self.pag_url)
         else:
             print("error paginacion")
@@ -42,8 +43,8 @@ class mvyt(object):
         pag.close()
         return self.read_pag
 
-    def vids (self, link):
-        self.url = link
+    def vids (self):
+        #self.url = link
         soup = BeautifulSoup(self.nave(), "html.parser")
         div_em = soup.find_all('div', class_ = 'youtube_lite')
         for items in div_em:
@@ -51,6 +52,12 @@ class mvyt(object):
             link = ('https://www.youtube.com/watch?v=' + a['data-youtube'])
             self.data.append(link)
         return self.data,soup
+
+    def current_pag(self):
+        pass
+
+    def allurls(self):
+        return self.all_urls
 
     def user(self):
         return self.user_agent
@@ -101,6 +108,17 @@ class menu(object):
     def error(self):
         input("opcion invalida...")
 
+def test(lista):
+    videos = {}
+    for items in lista:
+        try:
+            video = pafy.new(items)
+            titulo = video.title
+            videos[titulo] = items
+        except:
+            pass
+    return videos
+
 def main():
     user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
     x = menu()
@@ -114,21 +132,21 @@ def main():
     elif option == "3":
         x.DrawOption()
         res = x.post("\u21B3")
-        try:
-            test = mvyt(res, user_agents)
-            lista,soup = test.vids(res)
-            for items in lista:
-                try:
-                    video = pafy.new(items)
-                    titulo = video.title ####################################################---->here
-                    if titulo[0:4] != "ERROR":
-                        print (Fore.BLUE + titulo, "_" + Fore.MAGENTA + items)
-                    else:
-                        print (Fore.RED + "Video eliminado")
-                except:
-                    pass
-        except:
-            print ("omg")
+        Mvyt = mvyt(res, user_agents)
+        print ("Procesando..")
+        lista,soup = Mvyt.vids()
+        Mvyt.pagination()
+        allurls = Mvyt.allurls()
+        videos = test(lista)
+        x.cls()
+        x.DrawOption()
+        print ("-Videos activos-")
+        for keys in videos:
+            print (videos[keys])
+        print ("Pagina: ",Mvyt.current_pag.contents[0], "de ",Mvyt.nun_pags)
+        print (len(allurls))
+        for i in allurls:
+            print (i)
     elif option == "4":
         pass
     elif option == "5":
