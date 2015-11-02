@@ -72,7 +72,7 @@ class menu(object):
         | |(_)| |( (   ) )(_____)\   /     | |
         | |   | | \ \_/ /         ) (      | |
         | )   ( |  \   /          | |      | |
-        |/     \|   \_/           \_/      )_( 0.2a""",
+        |/     \|   \_/           \_/      )_( 0.2.1a""",
         "                    by newfag               ",
         "1-Todo el Thread",
         "2-Video a video",
@@ -119,18 +119,25 @@ def test(lista):
             pass
     return videos
 
-def main_pagination(option, allurls):
+def main_pagination(option):
     if option == "n":
         pass
     elif option == "b":
         pass
     elif option.isdigit():
         print (int(option))
+    elif option[0] == "/":
+        print ("slash")
+        selecvids = option[1::].split(",")
+        print (selecvids)
     else:
-        print (Error)
+        print ("Error")
+
+    return selecvids
 
 
 def main():
+    init()
     user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
     x = menu()
     x.cls()
@@ -152,21 +159,19 @@ def main():
         x.cls()
         x.DrawOption()
         print ("-Videos activos-")
+        cont = 0
         for keys in videos:
-            print (videos[keys])
+            cont += 1
+            print (cont, " ", keys, "\n", videos[keys])
         print ("Pagina: ",Mvyt.current_pag.contents[0], "de ",Mvyt.nun_pags)
-        print (len(allurls))
-        for i in allurls:
-            print (i)
+
     elif option == "4":
         pass
     elif option == "5":
         x.quit()
-        pass
     else:
         x.error
 
 if __name__ == '__main__':
-    #init()
-    #main()
-    main_pagination("1")
+    main()
+    #main_pagination("/1,2,4,5")
