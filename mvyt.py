@@ -119,7 +119,7 @@ def test(lista):
             pass
     return videos
 
-def main_pagination(option):
+def option_list(option):
     if option == "n":
         pass
     elif option == "b":
@@ -127,14 +127,13 @@ def main_pagination(option):
     elif option.isdigit():
         print (int(option))
     elif option[0] == "/":
-        print ("slash")
         selecvids = option[1::].split(",")
         print (selecvids)
+        return selecvids
+    elif option == "x":
+        return option
     else:
         print ("Error")
-
-    return selecvids
-
 
 def main():
     init()
@@ -164,7 +163,6 @@ def main():
             cont += 1
             print (cont, " ", keys, "\n", videos[keys])
         print ("Pagina: ",Mvyt.current_pag.contents[0], "de ",Mvyt.nun_pags)
-
     elif option == "4":
         pass
     elif option == "5":
