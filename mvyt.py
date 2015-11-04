@@ -138,6 +138,7 @@ def option_list(option):
 def main():
     init()
     user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
+    run = True
     x = menu()
     x.cls()
     x.DrawMain()
@@ -149,6 +150,11 @@ def main():
     elif option == "3":
         x.DrawOption()
         res = x.post("Url del thread \u21B3")
+        while run:
+            choice = input(": ")
+            chop = option_list(choice)
+            if chop == "x":
+                run = False
         Mvyt = mvyt(res, user_agents)
         print ("Procesando..")
         lista,soup = Mvyt.vids()
