@@ -64,7 +64,8 @@ class mvyt(object):
 
 class menu(object):
     def __init__(self):
-        self.main = [
+        self.user_in = None
+        self.tittle = [
         """         _______                        _________
         (       )|\     /|     |\     /|\__   __/
         | () () || )   ( |     ( \   / )   ) (
@@ -72,41 +73,27 @@ class menu(object):
         | |(_)| |( (   ) )(_____)\   /     | |
         | |   | | \ \_/ /         ) (      | |
         | )   ( |  \   /          | |      | |
-        |/     \|   \_/           \_/      )_( 0.2.1a""",
+        |/     \|   \_/           \_/      )_( 0.3a""",
         "                    by newfag               ",
-        "1-Todo el Thread",
-        "2-Video a video",
-        "3-Ver lista",
-        "4-Ayuda",
-        "5-Salir",
         ]
+        self.help = """
+        -u Insert Url: "-u http://www.dsadasd.com"
+        -d Download options: "-d 1,2,3,4,8" or "-d 1:4,8"
+        -x For exit
+        """
+    def Draw_help(self):
+        print (self.help[0::])
 
     def DrawMain(self):
-        print (Fore.RED + self.main[0],"\n",Fore.YELLOW + self.main[1],Style.RESET_ALL,"\n")
-        for items in self.main[2:7]:
-            print (Fore.MAGENTA  + items[0:1], Style.RESET_ALL + items[1::])
+        print (Fore.RED + self.tittle[0],"\n",Fore.YELLOW + self.tittle[1],Style.RESET_ALL,"\n")
 
-    def DrawOption(self):
-        self.cls()
-        print (Fore.RED + self.main[0],"\n",Fore.YELLOW + self.main[1],Style.RESET_ALL,"\n")
-
-    def post(self, text):
-        user_in = str(input(Fore.MAGENTA + text + Style.RESET_ALL))
-        return user_in
-
-    def test(self):
-        print ("test")
-
-    def quit(self):
-        self.cls()
-        print ("Get the fuck out!")
-        sys.exit()
+    def pronpt(self, text):
+        self.user_in = str(input(Fore.MAGENTA + text + Style.RESET_ALL))
+        return self.user_in
 
     def cls(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    def error(self):
-        input("opcion invalida...")
 
 def test(lista):
     videos = {}
@@ -120,18 +107,24 @@ def test(lista):
     return videos
 
 def option_list(option):
-    if option == "n":
-        pass
-    elif option == "b":
-        pass
-    elif option.isdigit():
+    selecvids = []
+    cont_options = 0
+    if option.isdigit():
         print (int(option))
-    elif option[0] == "/":
-        selecvids = option[1::].split(",")
-        print (selecvids)
-        return selecvids
-    elif option == "x":
         return option
+    elif option[0:2] == "-d":
+        selecvids = option[2::].split(",")
+        for items in selecvids:
+            if ":" in items:
+                x = items.split(":")
+                start = int(x[0])
+                stop = int(x[1])
+                del selecvids[cont_options]
+                for i in range(int(x[0]),int(x[1]) + 1):
+                    selecvids.append(str(i))
+            cont_options +=1
+        selecvids = list(set(selecvids))
+        return selecvids
     else:
         print ("Error")
 
@@ -139,43 +132,31 @@ def main():
     init()
     user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
     run = True
-    x = menu()
-    x.cls()
-    x.DrawMain()
-    option = x.post("\u21B3 Select a choice:")
-    if option == "1":
-        pass
-    elif option == "2":
-        pass
-    elif option == "3":
-        x.DrawOption()
-        res = x.post("Url del thread \u21B3")
-        while run:
-            choice = input(": ")
-            chop = option_list(choice)
-            if chop == "x":
-                run = False
-        Mvyt = mvyt(res, user_agents)
-        print ("Procesando..")
-        lista,soup = Mvyt.vids()
-        Mvyt.pagination()
-        allurls = Mvyt.allurls()
-        videos = test(lista)
-        x.cls()
-        x.DrawOption()
-        print ("-Videos activos-")
-        cont = 0
-        for keys in videos:
-            cont += 1
-            print (cont, " ", keys, "\n", videos[keys])
-        print ("Pagina: ",Mvyt.current_pag.contents[0], "de ",Mvyt.nun_pags)
-    elif option == "4":
-        pass
-    elif option == "5":
-        x.quit()
-    else:
-        x.error
+    p = menu()
+    p.cls()
+    p.DrawMain()
+    url = None
+    while run:
+        option = p.pronpt("-h for help \n:")
+        if option == "-x":
+            print ("Exit")
+            sys.exit()
+        elif option == "-h":
+            p.cls()
+            p.DrawMain()
+            p.Draw_help()
+        elif option[0:2] == "-u":
+            print ("url")
+
+        else:
+            p.cls()
+            p.DrawMain()
+            op = option_list(option)
+            if op:
+                print (op)
+
+
+
 
 if __name__ == '__main__':
     main()
-    #main_pagination("/1,2,4,5")
