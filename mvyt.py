@@ -77,7 +77,6 @@ class menu(object):
         "                    by newfag               ",
         ]
         self.help = """
-        -u Insert Url: "-u http://www.dsadasd.com"
         -d Download options: "-d 1,2,3,4,8" or "-d 1:4,8"
         -x For exit
         """
@@ -137,24 +136,32 @@ def main():
     p.DrawMain()
     url = None
     while run:
-        option = p.pronpt("-h for help \n:")
-        if option == "-x":
-            print ("Exit")
-            sys.exit()
-        elif option == "-h":
+        if url:
             p.cls()
             p.DrawMain()
-            p.Draw_help()
-        elif option[0:2] == "-u":
-            print ("url")
+            option = p.pronpt("-h for help \n:")
+            if option == "-x":
+                print ("Exit")
+                sys.exit()
+            elif option == "-h":
+                p.cls()
+                p.DrawMain()
+                p.Draw_help()
+            elif option[0:2] == "-u":
+                print ("url")
 
+            else:
+                p.cls()
+                p.DrawMain()
+                op = option_list(option)
+                if op:
+                    print (op)
         else:
             p.cls()
             p.DrawMain()
-            op = option_list(option)
-            if op:
-                print (op)
-
+            print ('Insert Url: "http://www.example.com"')
+            url = p.pronpt(": ")
+            
 
 
 
