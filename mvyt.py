@@ -131,8 +131,10 @@ def main():
     init()
     user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
     run = True
-    p = menu()
     url = None
+    p = menu()
+    selecvids = []
+    cont_options = 0
     while run:
         if url:
             p.cls()
@@ -145,6 +147,13 @@ def main():
                 p.cls()
                 p.DrawMain()
                 p.Draw_help()
+            elif option[0:2] == "-d":
+                if option[3].isdigit():
+                    print (int(option))
+                    
+                pass
+
+
             else:
                 p.cls()
                 p.DrawMain()
