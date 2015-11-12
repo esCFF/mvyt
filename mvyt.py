@@ -105,27 +105,6 @@ def test(lista):
             pass
     return videos
 
-def option_list(option):
-    selecvids = []
-    cont_options = 0
-    if option.isdigit():
-        print (int(option))
-        return option
-    elif option[0:2] == "-d":
-        selecvids = option[2::].split(",")
-        for items in selecvids:
-            if ":" in items:
-                x = items.split(":")
-                start = int(x[0])
-                stop = int(x[1])
-                del selecvids[cont_options]
-                for i in range(int(x[0]),int(x[1]) + 1):
-                    selecvids.append(str(i))
-            cont_options +=1
-        selecvids = list(set(selecvids))
-        return selecvids
-    else:
-        print ("Error")
 
 def main():
     init()
@@ -134,11 +113,10 @@ def main():
     url = None
     p = menu()
     selecvids = []
-    cont_options = 0
     while run:
         if url:
-            p.cls()
-            p.DrawMain()
+            #p.cls()
+            #p.DrawMain()
             option = p.pronpt("-h for help \n:")
             if option == "-x":
                 print ("Exit")
@@ -149,25 +127,27 @@ def main():
                 p.Draw_help()
             elif option[0:2] == "-d":
                 if option[3].isdigit():
-                    print (int(option))
-                    
-                pass
-
-
-            else:
-                p.cls()
-                p.DrawMain()
-                op = option_list(option)
-                if op:
-                    print (op)
+                    print (option)
+                    selecvids.append(option)
+                if option[3] == "-":
+                    selecvids = option[4::].split(",")
+                    cont_options = 0
+                    for items in selecvids:
+                        if ":" in items:
+                            x = items.split(":")
+                            del selecvids[cont_options]
+                            for i in range(int(x[0]),int(x[1]) + 1):
+                                selecvids.append(str(i))
+                        cont_options +=1
+                    selecvids = list(set(selecvids))
+                    print (selecvids)
+                else:
+                    print ("Error")
         else:
             p.cls()
             p.DrawMain()
             print ('Insert Url: "http://www.example.com"')
-            url = p.pronpt(": ")
-
-
-
+            url = p.pronpt(":")
 
 if __name__ == '__main__':
     main()
