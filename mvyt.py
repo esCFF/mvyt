@@ -132,8 +132,6 @@ def main():
     user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
     run = True
     p = menu()
-    p.cls()
-    p.DrawMain()
     url = None
     while run:
         if url:
@@ -147,9 +145,6 @@ def main():
                 p.cls()
                 p.DrawMain()
                 p.Draw_help()
-            elif option[0:2] == "-u":
-                print ("url")
-
             else:
                 p.cls()
                 p.DrawMain()
@@ -161,7 +156,7 @@ def main():
             p.DrawMain()
             print ('Insert Url: "http://www.example.com"')
             url = p.pronpt(": ")
-            
+
 
 
 
