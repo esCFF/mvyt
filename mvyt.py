@@ -9,9 +9,9 @@ import time
 import pafy
 
 class mvyt(object):
-    def __init__(self, url, user_agents):
+    def __init__(self, user_agents):
         self.pag = None
-        self.url = url
+        self.url = None
         self.user_agent = choice(user_agents)
         self.data = []
         self.nun_pags = 0
@@ -19,11 +19,11 @@ class mvyt(object):
         self.user_in = None
         self.coin = True
         self.all_urls = []
+        self.soup = None
 
     def pagination(self):
-        dat,soup = self.vids()
-        current_pag = soup.find_all('div', id='scrollpages')
-        nun_pags = soup.find_all('a',class_= 'last')
+        current_pag = self.soup.find_all('div', id='scrollpages')
+        nun_pags = self.soup.find_all('a',class_= 'last')
         for items in current_pag:
             self.current_pag = items.find('em')
         for items in nun_pags:
@@ -45,13 +45,16 @@ class mvyt(object):
 
     def vids (self):
         #self.url = link
-        soup = BeautifulSoup(self.nave(), "html.parser")
-        div_em = soup.find_all('div', class_ = 'youtube_lite')
+        self.soup = BeautifulSoup(self.nave(), "html.parser")
+        div_em = self.soup.find_all('div', class_ = 'youtube_lite')
         for items in div_em:
             a = items.find('a')
             link = ('https://www.youtube.com/watch?v=' + a['data-youtube'])
             self.data.append(link)
-        return self.data,soup
+        return self.data
+
+    def set_url(self, url):
+        self.url = url
 
     def current_pag(self):
         pass
@@ -107,16 +110,21 @@ def test(lista):
 
 
 def main():
-    init()
-    user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
     run = True
-    url = None
+    url = False
     p = menu()
     selecvids = []
+    user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
+    Mvyt = mvyt(user_agents)
+    init()
     while run:
         if url:
-            #p.cls()
-            #p.DrawMain()
+            Mvyt.set_url(url)
+            yulist = Mvyt.vids()
+            x = test(yulist)
+            for i in x:
+                print (i)
+
             option = p.pronpt("-h for help \n:")
             if option == "-x":
                 print ("Exit")
@@ -148,6 +156,7 @@ def main():
             p.DrawMain()
             print ('Insert Url: "http://www.example.com"')
             url = p.pronpt(":")
+
 
 if __name__ == '__main__':
     main()
