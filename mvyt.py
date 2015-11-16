@@ -18,8 +18,9 @@ class mvyt(object):
         self.current_pag = 0
         self.user_in = None
         self.coin = True
-        self.all_urls = []
+        self.all_urls = [] #hsahdj
         self.soup = None
+
 
     def pagination(self):
         current_pag = self.soup.find_all('div', id='scrollpages')
@@ -119,44 +120,51 @@ def main():
     init()
     while run:
         if url:
-            Mvyt.set_url(url)
-            yulist = Mvyt.vids()
-            x = test(yulist)
-            for i in x:
-                print (i)
+            try:
+                Mvyt.set_url(url)
+                yulist = Mvyt.vids()
+                x = test(yulist)
+                for i in x:
+                    print (i)
+                option = p.pronpt("-h for help \n:")
+                if option == "-x":
+                    print ("Exit")
+                    sys.exit()
+                elif option == "-h":
+                    p.cls()
+                    p.DrawMain()
+                    p.Draw_help()
+                elif option[0:2] == "-d":
+                    if option[3].isdigit():
+                        print (option)
+                        selecvids.append(option)
+                    if option[3] == "-":
+                        selecvids = option[4::].split(",")
+                        cont_options = 0
+                        for items in selecvids:
+                            if ":" in items:
+                                x = items.split(":")
+                                del selecvids[cont_options]
+                                for i in range(int(x[0]),int(x[1]) + 1):
+                                    selecvids.append(str(i))
+                            cont_options +=1
+                        selecvids = list(set(selecvids))
+                        print (selecvids)
+                    else:
+                        print ("Error")
 
-            option = p.pronpt("-h for help \n:")
-            if option == "-x":
-                print ("Exit")
-                sys.exit()
-            elif option == "-h":
-                p.cls()
-                p.DrawMain()
-                p.Draw_help()
-            elif option[0:2] == "-d":
-                if option[3].isdigit():
-                    print (option)
-                    selecvids.append(option)
-                if option[3] == "-":
-                    selecvids = option[4::].split(",")
-                    cont_options = 0
-                    for items in selecvids:
-                        if ":" in items:
-                            x = items.split(":")
-                            del selecvids[cont_options]
-                            for i in range(int(x[0]),int(x[1]) + 1):
-                                selecvids.append(str(i))
-                        cont_options +=1
-                    selecvids = list(set(selecvids))
-                    print (selecvids)
-                else:
-                    print ("Error")
+            except ValueError:
+                url = None
+                print (url, "es incorrecto")
+                time.sleep(1)
+
         else:
             p.cls()
             p.DrawMain()
-            print ('Insert Url: "http://www.example.com"')
+            print ('Insert Url: "http://www.example.com"\n "-x" to Exit  ')
             url = p.pronpt(":")
-
+            if url == "-x":
+                sys.exit()
 
 if __name__ == '__main__':
     main()
