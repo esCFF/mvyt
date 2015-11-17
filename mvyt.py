@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen, FancyURLopener
 from urllib.parse import urlencode
 from colorama import Fore, Back, Style, init
+from random import choice
 import urllib.request
 import os,sys
 import time
@@ -66,6 +67,49 @@ class mvyt(object):
     def user(self):
         return self.user_agent
 
+################## Youtube_DL ##################################################
+class MyLogger(object):
+    def debug(self, msg):
+        pass
+
+    def warning(self, msg):
+        pass
+
+    def error(self, msg):
+        #print(msg)
+        pass
+
+def my_hook(d):
+    if d['status'] == 'finished':
+        print('Done downloading, now converting ...')
+
+def ytdl(lista):
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        'logger': MyLogger(),
+        'progress_hooks': [my_hook],
+    }
+    cont = 0
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        for videos in lista:
+            cont +=1
+            try:
+                info_dict = ydl.extract_info(videos, download=False)
+                video_title = info_dict.get('title', None)
+                print ("[",cont,"]",video_title)
+                print (videos)
+            except youtube_dl.utils.DownloadError:
+                cont -=1
+                print ("[ X ] video elminado")
+                print (videos)
+        #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
+################################################################################
+
 class menu(object):
     def __init__(self):
         self.user_in = None
@@ -97,50 +141,6 @@ class menu(object):
     def cls(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
-
-################## Youtube_DL ##################################################
-class MyLogger(object):
-    def debug(self, msg):
-        pass
-
-    def warning(self, msg):
-        pass
-
-    def error(self, msg):
-        #print(msg)
-        pass
-
-def my_hook(d):
-    if d['status'] == 'finished':
-        print('Done downloading, now converting ...')
-
-ydl_opts = {
-    'format': 'bestaudio/best',
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': '192',
-    }],
-    'logger': MyLogger(),
-    'progress_hooks': [my_hook],
-}
-
-def ytdl(lista):
-    cont = 0
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        for videos in lista:
-            cont +=1
-            try:
-                info_dict = ydl.extract_info(videos, download=False)
-                video_title = info_dict.get('title', None)
-                print ("[",cont,"]",video_title)
-                print (videos)
-            except youtube_dl.utils.DownloadError:
-                cont -=1
-                print ("[ X ] video elminado")
-                print (videos)
-        #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
-################################################################################
 
 def main():
     run = True
