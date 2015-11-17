@@ -1,3 +1,5 @@
+
+from __future__ import unicode_literals
 from bs4 import BeautifulSoup
 from random import choice
 from urllib.request import Request, urlopen, FancyURLopener
@@ -7,6 +9,7 @@ from colorama import Fore, Back, Style, init
 import os,sys
 import time
 import pafy
+import youtube_dl
 
 class mvyt(object):
     def __init__(self, user_agents):
@@ -98,6 +101,51 @@ class menu(object):
         os.system('cls' if os.name == 'nt' else 'clear')
 
 
+################## Youtube_DL ##################################################
+class MyLogger(object):
+    def debug(self, msg):
+        pass
+
+    def warning(self, msg):
+        pass
+
+    def error(self, msg):
+        #print(msg)
+        pass
+
+def my_hook(d):
+    if d['status'] == 'finished':
+        print('Done downloading, now converting ...')
+
+ydl_opts = {
+    'format': 'bestaudio/best',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+    'logger': MyLogger(),
+    'progress_hooks': [my_hook],
+}
+
+def ytdl(lista):
+    cont = 0
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        for videos in lista:
+            cont +=1
+            try:
+                info_dict = ydl.extract_info(videos, download=False)
+                video_title = info_dict.get('title', None)
+                print ("[",cont,"]",video_title)
+                print (videos)
+            except youtube_dl.utils.DownloadError:
+                cont -=1
+                print ("[ X ] video elminado")
+                print (videos)
+        #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
+################################################################################
+
+
 def test(lista):
     videos = {}
     for items in lista:
@@ -123,9 +171,7 @@ def main():
             try:
                 Mvyt.set_url(url)
                 yulist = Mvyt.vids()
-                x = test(yulist)
-                for i in x:
-                    print (i)
+                ytdl(yulist)
                 option = p.pronpt("-h for help \n:")
                 if option == "-x":
                     print ("Exit")
@@ -154,8 +200,8 @@ def main():
                         print ("Error")
 
             except ValueError:
-                url = None
                 print (url, "es incorrecto")
+                url = None
                 time.sleep(1)
 
         else:
