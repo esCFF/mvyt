@@ -83,18 +83,9 @@ def my_hook(d):
     if d['status'] == 'finished':
         print('Done downloading, now converting ...')
 
-def ytdl(lista):
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-        'logger': MyLogger(),
-        'progress_hooks': [my_hook],
-    }
+def ytdl(lista,ydl_opts):
     cont = 0
+    vid_list = []
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         for videos in lista:
             cont +=1
@@ -103,11 +94,13 @@ def ytdl(lista):
                 video_title = info_dict.get('title', None)
                 print ("[",cont,"]",video_title)
                 print (videos)
+                vid_list.append(videos)
             except youtube_dl.utils.DownloadError:
                 cont -=1
                 print ("[ X ] video elminado")
                 print (videos)
         #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
+        return vid_list
 ################################################################################
 
 class menu(object):
@@ -141,21 +134,40 @@ class menu(object):
     def cls(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
+def clean_list(ddlist, vdlist, select_vids):
+    for i in select_vids:
+        dd = vdlist[int(i)-1]
+        ddlist.append(dd)
+    return ddlist
+
+ydl_opts = {
+    'format': 'bestaudio/best',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+    'logger': MyLogger(),
+    'progress_hooks': [my_hook],
+}
+
 
 def main():
     run = True
     url = False
     p = menu()
     selecvids = []
+    dd_list = []
     user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0"]
     Mvyt = mvyt(user_agents)
     init()
     while run:
         if url:
             try:
-                Mvyt.set_url(url)
-                yulist = Mvyt.vids()
-                ytdl(yulist)
+                if not dd_list:
+                    Mvyt.set_url(url)
+                    yulist = Mvyt.vids()
+                    mylist = ytdl(yulist, ydl_opts)
                 option = p.pronpt("-h for help \n:")
                 if option == "-x":
                     print ("Exit")
@@ -180,11 +192,17 @@ def main():
                             cont_options +=1
                         selecvids = list(set(selecvids))
                         print (selecvids)
-                    else:
-                        print ("Error")
+                        dd_list = clean_list(dd_list,mylist,selecvids)
+                        dd_list = ytdl(dd_list)
+                elif option[0:2] == "-l":
+                    if dd_list:
+                        for items in dd_list:
+                            print (items)
+                else:
+                    print ("Error")
 
             except ValueError:
-                print (url, "es incorrecto")
+                print (url, "es incorrecta")
                 url = None
                 time.sleep(1)
 
