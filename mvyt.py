@@ -145,19 +145,6 @@ def ytdl(lista):
         #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
 ################################################################################
 
-
-def test(lista):
-    videos = {}
-    for items in lista:
-        try:
-            video = pafy.new(items)
-            titulo = video.title
-            videos[titulo] = items
-        except:
-            pass
-    return videos
-
-
 def main():
     run = True
     url = False
