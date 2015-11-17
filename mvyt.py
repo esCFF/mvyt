@@ -1,14 +1,11 @@
-
 from __future__ import unicode_literals
 from bs4 import BeautifulSoup
-from random import choice
 from urllib.request import Request, urlopen, FancyURLopener
 from urllib.parse import urlencode
-import urllib.request
 from colorama import Fore, Back, Style, init
+import urllib.request
 import os,sys
 import time
-import pafy
 import youtube_dl
 
 class mvyt(object):
