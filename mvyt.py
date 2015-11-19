@@ -9,7 +9,6 @@ import os,sys
 import time
 import youtube_dl
 
-
 class menu(object):
     def __init__(self):
         self.user_in = None
@@ -21,7 +20,7 @@ class menu(object):
         | |(_)| |( (   ) )(_____)\   /     | |
         | |   | | \ \_/ /         ) (      | |
         | )   ( |  \   /          | |      | |
-        |/     \|   \_/           \_/      )_( 0.3a""",
+        |/     \|   \_/           \_/      )_( 0.4a""",
         "                    by newfag               ",
         ]
         self.help = """
@@ -42,7 +41,6 @@ class menu(object):
         os.system('cls' if os.name == 'nt' else 'clear')
 
 
-
 class mvyt(object):
     def __init__(self, user_agents):
         self.pag = None
@@ -51,11 +49,7 @@ class mvyt(object):
         self.data = []
         self.nun_pags = None
         self.current_pag = None
-        self.user_in = None
-        self.coin = True
-        self.all_urls = [] #hsahdj
         self.soup = None
-
 
     def pagination(self):
         current_pag = self.soup.find_all('div', id='scrollpages')
@@ -66,7 +60,6 @@ class mvyt(object):
             self.nun_pags = items.contents[0]
         self.current_pag = self.current_pag.contents[0]
 
-
     def nave (self):
         pag = urlopen(Request(self.url, headers={'User-Agent': self.user_agent}))
         self.read_pag = pag.read()
@@ -74,7 +67,6 @@ class mvyt(object):
         return self.read_pag
 
     def vids (self):
-        #self.url = link
         self.soup = BeautifulSoup(self.nave(), "html.parser")
         div_em = self.soup.find_all('div', class_ = 'youtube_lite')
         for items in div_em:
@@ -84,14 +76,12 @@ class mvyt(object):
         return self.data
 
     def set_url(self, url):
-        #Yolo
         try:
             self.url = url
             self.vids()
             self.data = []
             return True
         except:
-            error = "url error"
             self.data = []
             return  False
 
@@ -121,6 +111,7 @@ def my_hook(d):
         print('Done downloading, now converting ...')
 
 def ytdl(lista,ydl_opts):
+    #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
     cont = 0
     vid_list = []
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -129,20 +120,14 @@ def ytdl(lista,ydl_opts):
             try:
                 info_dict = ydl.extract_info(videos, download=False)
                 video_title = info_dict.get('title', None)
-                #print ("[",cont,"]",video_title)
-                #print (videos)
                 vid_list.append(videos)
             except youtube_dl.utils.DownloadError:
                 cont -=1
-                #print ("[ X ] video elminado")
-                #print (videos)
-        #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
         return vid_list
 ################################################################################
 
-
 def clean_list(ddlist, vdlist, select_vids):
-    if len(ddlist) > 1: 
+    if len(ddlist) > 1:
         for i in select_vids:
             dd = vdlist[int(i)-1]
             ddlist.append(dd)
@@ -193,10 +178,12 @@ def main(ydl_opts):
             if option[0:2] == "-x":
                 print ("Exit")
                 sys.exit()
+
             elif option[0:2] == "-h":
                 p.cls()
                 p.DrawMain()
                 p.Draw_help()
+
             elif option[0:2] == "-d":
                 selecvids = dlist(option)
                 if selecvids:
@@ -226,7 +213,7 @@ def main(ydl_opts):
                 newpag = url + "/" + str(cpag)
 
             else:
-                print ("Not in options")
+                print ("cool story")
         else:
             while True:
                 p.cls()
