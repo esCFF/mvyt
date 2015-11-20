@@ -58,7 +58,7 @@ class mvyt(object):
             self.current_pag = items.find('em')
         for items in nun_pags:
             self.nun_pags = items.contents[0]
-        self.current_pag = self.current_pag.contents[0]
+        self.current_pag = str(self.current_pag.contents[0])
 
     def nave (self):
         pag = urlopen(Request(self.url, headers={'User-Agent': self.user_agent}))
@@ -132,12 +132,14 @@ def clean_list(ddlist, vdlist, select_vids):
             dd = vdlist[int(i)-1]
             ddlist.append(dd)
         return ddlist
+    else:
+        return ddlist
 
 def dlist(option):
     selecvids = []
     try:
         if option[3].isdigit():
-            selecvids.append(option)
+            selecvids.append(option[3])
             return selecvids
         elif option[3] == "-":
             selecvids = option[4::].split(",")
@@ -154,43 +156,43 @@ def dlist(option):
     except:
         return False
 
-def main(ydl_opts):
+def main(ydl_opts, user_agents):
     run = True
     url = False
     cpag = False
     newpag = None
     option = None
-    p = menu()
     dd_list = []
-    user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0"]
+    p = menu()
     Mvyt = mvyt(user_agents)
     init()
     while run:
         if url:
             if newpag and option[0:2] == "-n":
+                p.cls()
+                p.DrawMain()
                 Mvyt.set_url(newpag)
                 Mvyt.pagination()
-            else:
-                Mvyt.pagination()
 
-            print (cpag,"of", Mvyt.get_npags())
+            if option and option[0:2] == "-d":
+                p.cls()
+                p.DrawMain()
+                for items in dd_list:
+                    print (items)
+
+            print (Mvyt.get_cpag(),"of", Mvyt.get_npags())
             option = p.pronpt("-h for help \n:")
-            if option[0:2] == "-x":
-                print ("Exit")
-                sys.exit()
 
-            elif option[0:2] == "-h":
+            if option[0:2] == "-h":
                 p.cls()
                 p.DrawMain()
                 p.Draw_help()
 
             elif option[0:2] == "-d":
                 selecvids = dlist(option)
+                print (selecvids)
                 if selecvids:
-                    yulist = Mvyt.vids()
-                    mylist = ytdl(yulist, ydl_opts)
-                    dd_list = clean_list(dd_list,mylist,selecvids)
-                    dd_list = ytdl(dd_list)
+                    break
                 else:
                     print ("sintax error")
                     dd_list = []
@@ -212,6 +214,9 @@ def main(ydl_opts):
                 cpag -=1
                 newpag = url + "/" + str(cpag)
 
+            elif option[0:2] == "-x":
+                print ("Exit")
+                sys.exit()
             else:
                 print ("cool story")
         else:
@@ -225,6 +230,7 @@ def main(ydl_opts):
                 test = Mvyt.set_url(url)
                 if test:
                     Mvyt.set_url(url)
+                    Mvyt.pagination()
                     break
                 else:
                     print ("url error")
@@ -241,5 +247,5 @@ if __name__ == '__main__':
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
-
-    main(ydl_opts)
+    user_agents = ["Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0"]
+    main(ydl_opts, user_agents)
