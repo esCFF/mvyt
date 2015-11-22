@@ -113,14 +113,14 @@ def my_hook(d):
 def ytdl(lista,ydl_opts):
     #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
     cont = 0
-    vid_list = []
+    vid_list ={}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         for videos in lista:
             cont +=1
             try:
                 info_dict = ydl.extract_info(videos, download=False)
                 video_title = info_dict.get('title', None)
-                vid_list.append(videos)
+                vid_list[cont] = [video_title,videos]
             except youtube_dl.utils.DownloadError:
                 cont -=1
         return vid_list
@@ -163,8 +163,8 @@ def main(ydl_opts, user_agents):
     newpag = None
     option = None
     dd_list = []
-    p = menu()
     Mvyt = mvyt(user_agents)
+    p = menu()
     init()
     while run:
         if url:
@@ -173,13 +173,13 @@ def main(ydl_opts, user_agents):
                 p.DrawMain()
                 Mvyt.set_url(newpag)
                 Mvyt.pagination()
-
             if option and option[0:2] == "-d":
                 p.cls()
                 p.DrawMain()
-                for items in dd_list:
-                    print (items)
-
+            pag_vids = Mvyt.vids()
+            ytlist = ytdl(pag_vids,ydl_opts)
+            for items in ytlist:
+                print (items, "-" ,ytlist[items][0])
             print (Mvyt.get_cpag(),"of", Mvyt.get_npags())
             option = p.pronpt("-h for help \n:")
 
@@ -187,7 +187,6 @@ def main(ydl_opts, user_agents):
                 p.cls()
                 p.DrawMain()
                 p.Draw_help()
-
             elif option[0:2] == "-d":
                 selecvids = dlist(option)
                 print (selecvids)
@@ -196,24 +195,20 @@ def main(ydl_opts, user_agents):
                 else:
                     print ("sintax error")
                     dd_list = []
-
             elif option[0:2] == "-l":
                 if dd_list:
                     for items in dd_list:
                         print (items)
-
             elif option[0:2] == "-n":
                 cpag = Mvyt.get_cpag()
                 npags = Mvyt.get_npags()
                 if cpag < npags:
                     cpag = int(cpag) + 1
                     newpag = url + "/" + str(cpag)
-
             elif option[0:2] == "-b":
                 cpag = int(Mvyt.get_cpag())
                 cpag -=1
                 newpag = url + "/" + str(cpag)
-
             elif option[0:2] == "-x":
                 print ("Exit")
                 sys.exit()
