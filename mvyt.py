@@ -163,6 +163,7 @@ def main(ydl_opts, user_agents):
     newpag = None
     option = None
     dd_list = []
+    save_pag = {}
     Mvyt = mvyt(user_agents)
     p = menu()
     init()
@@ -177,12 +178,12 @@ def main(ydl_opts, user_agents):
                 p.cls()
                 p.DrawMain()
             pag_vids = Mvyt.vids()
+            print (newpag, "\nLoading....")
             ytlist = ytdl(pag_vids,ydl_opts)
             for items in ytlist:
                 print (items, "-" ,ytlist[items][0])
             print (Mvyt.get_cpag(),"of", Mvyt.get_npags())
             option = p.pronpt("-h for help \n:")
-
             if option[0:2] == "-h":
                 p.cls()
                 p.DrawMain()
@@ -207,8 +208,11 @@ def main(ydl_opts, user_agents):
                     newpag = url + "/" + str(cpag)
             elif option[0:2] == "-b":
                 cpag = int(Mvyt.get_cpag())
-                cpag -=1
-                newpag = url + "/" + str(cpag)
+                if cpag > 1:
+                    cpag -=1
+                    newpag = url + "/" + str(cpag)
+                    Mvyt.set_url(newpag)
+                    Mvyt.pagination()
             elif option[0:2] == "-x":
                 print ("Exit")
                 sys.exit()
