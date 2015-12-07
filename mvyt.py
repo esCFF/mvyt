@@ -8,6 +8,7 @@ import urllib.request
 import os,sys
 import time
 import youtube_dl
+import readline
 
 class menu(object):
     def __init__(self):
@@ -20,7 +21,7 @@ class menu(object):
         | |(_)| |( (   ) )(_____)\   /     | |
         | |   | | \ \_/ /         ) (      | |
         | )   ( |  \   /          | |      | |
-        |/     \|   \_/           \_/      )_( 0.4a""",
+        |/     \|   \_/           \_/      )_( 0.5a""",
         "                    by newfag               ",
         ]
         self.help = """
@@ -37,9 +38,11 @@ class menu(object):
         self.user_in = str(input(Fore.MAGENTA + text + Style.RESET_ALL))
         return self.user_in
 
+    def msg(text):
+        print (Fore.MAGENTA + text + Style.RESET_ALL)
+
     def cls(self):
         os.system('cls' if os.name == 'nt' else 'clear')
-
 
 class mvyt(object):
     def __init__(self, user_agents):
@@ -67,13 +70,15 @@ class mvyt(object):
         return self.read_pag
 
     def vids (self):
+        pagvdis = []
         self.soup = BeautifulSoup(self.nave(), "html.parser")
         div_em = self.soup.find_all('div', class_ = 'youtube_lite')
         for items in div_em:
             a = items.find('a')
             link = ('https://www.youtube.com/watch?v=' + a['data-youtube'])
             self.data.append(link)
-        return self.data
+            pagvdis.append(link)
+        return self.data,pagvdis
 
     def set_url(self, url):
         try:
@@ -111,7 +116,6 @@ def my_hook(d):
         print('Done downloading, now converting ...')
 
 def ytdl(lista,ydl_opts):
-    #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
     cont = 0
     vid_list ={}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -124,16 +128,23 @@ def ytdl(lista,ydl_opts):
             except youtube_dl.utils.DownloadError:
                 cont -=1
         return vid_list
+
+def ytdldown(lista, ydl_opts):
+    #path?
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        for link in lista:
+            try:
+                #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
+            except youtube_dl.utils.DownloadError:
+                print ("[Error] ",link)
 ################################################################################
 
-def clean_list(ddlist, vdlist, select_vids):
-    if len(ddlist) > 1:
-        for i in select_vids:
-            dd = vdlist[int(i)-1]
-            ddlist.append(dd)
-        return ddlist
-    else:
-        return ddlist
+def clean_list(ytlist, select_vids):
+    a = []
+    for i in select_vids:
+        dd = ytlist[int(i)]
+        a.append(dd)
+    return a
 
 def dlist(option):
     selecvids = []
@@ -157,32 +168,41 @@ def dlist(option):
         return False
 
 def main(ydl_opts, user_agents):
+    Mvyt = mvyt(user_agents)
+    p = menu()
+    init()
     run = True
     url = False
     cpag = False
     newpag = None
-    option = None
+    pag_vids = []
+    ytlist = []
     dd_list = []
-    save_pag = {}
-    Mvyt = mvyt(user_agents)
-    p = menu()
-    init()
+    option = ""
     while run:
         if url:
-            if newpag and option[0:2] == "-n":
+            if not pag_vids:
+                pag_vids = Mvyt.vids()[1]
+            if not ytlist:
+                print ("Loading....")
+                ytlist = ytdl(pag_vids,ydl_opts)
+                for items in ytlist:
+                    print (items, "-" ,ytlist[items][0])
+                print (Mvyt.get_cpag(),"de", Mvyt.get_npags())
+            if newpag and option[0:2] in ["-n","-b"]:
                 p.cls()
                 p.DrawMain()
                 Mvyt.set_url(newpag)
                 Mvyt.pagination()
-            if option and option[0:2] == "-d":
+                pag_vids = Mvyt.vids()[1]
+                print (newpag, "\nLoading....")
+                ytlist = ytdl(pag_vids,ydl_opts)
+                for items in ytlist:
+                    print (items, "-" ,ytlist[items][0])
+                print (Mvyt.get_cpag(),"de", Mvyt.get_npags())
+            elif option[0:2] == "-d":
                 p.cls()
                 p.DrawMain()
-            pag_vids = Mvyt.vids()
-            print (newpag, "\nLoading....")
-            ytlist = ytdl(pag_vids,ydl_opts)
-            for items in ytlist:
-                print (items, "-" ,ytlist[items][0])
-            print (Mvyt.get_cpag(),"of", Mvyt.get_npags())
             option = p.pronpt("-h for help \n:")
             if option[0:2] == "-h":
                 p.cls()
@@ -192,14 +212,17 @@ def main(ydl_opts, user_agents):
                 selecvids = dlist(option)
                 print (selecvids)
                 if selecvids:
-                    break
+                    dd_list.append(clean_list(ytlist,selecvids))
                 else:
                     print ("sintax error")
-                    dd_list = []
             elif option[0:2] == "-l":
                 if dd_list:
                     for items in dd_list:
                         print (items)
+            elif option[0:3] == "-dl":
+
+                pass
+
             elif option[0:2] == "-n":
                 cpag = Mvyt.get_cpag()
                 npags = Mvyt.get_npags()
@@ -211,8 +234,6 @@ def main(ydl_opts, user_agents):
                 if cpag > 1:
                     cpag -=1
                     newpag = url + "/" + str(cpag)
-                    Mvyt.set_url(newpag)
-                    Mvyt.pagination()
             elif option[0:2] == "-x":
                 print ("Exit")
                 sys.exit()
@@ -222,7 +243,7 @@ def main(ydl_opts, user_agents):
             while True:
                 p.cls()
                 p.DrawMain()
-                print ('Insert Url: "http://www.example.com"\n "-x" to Exit  ')
+                print ('Insert Url: "http://www.example.com"\n "-x" para salir')
                 url = p.pronpt(":")
                 if url == "-x":
                     sys.exit()
