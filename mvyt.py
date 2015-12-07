@@ -130,13 +130,17 @@ def ytdl(lista,ydl_opts):
         return vid_list
 
 def ytdldown(lista, ydl_opts):
-    #path?
+    x = []
+    for items in lista:
+        for i in items:
+            print (i[1])
+            x.append(i[1])
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        for link in lista:
-            try:
-                #ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
-            except youtube_dl.utils.DownloadError:
-                print ("[Error] ",link)
+        try:
+            for link in x:
+                ydl.download([link])
+        except youtube_dl.utils.DownloadError:
+            print ("[Error]\n",link)
 ################################################################################
 
 def clean_list(ytlist, select_vids):
@@ -219,10 +223,10 @@ def main(ydl_opts, user_agents):
                 if dd_list:
                     for items in dd_list:
                         print (items)
-            elif option[0:3] == "-dl":
-
-                pass
-
+            elif option[0:3] == "-ml":
+                print ("descargando")
+                ytdldown(dd_list, ydl_opts)
+                dd_list = []
             elif option[0:2] == "-n":
                 cpag = Mvyt.get_cpag()
                 npags = Mvyt.get_npags()
